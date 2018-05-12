@@ -96,6 +96,11 @@ module.exports = function(sequelize, DataTypes) {
       raw: true
     })
 
+    const company = await db.tb_company.findOne({
+      where: {recid: lowongan.company},
+      raw: true
+    })
+
     const mpendidikan = lowongan.pendidikan.split(',')
     const mjurusan = lowongan.jurusan.split(',')
 
@@ -125,7 +130,7 @@ module.exports = function(sequelize, DataTypes) {
       jurusan.push(p.jurusan)
     }
 
-    return {pendidikan, jurusan}
+    return {lowongan, pendidikan, jurusan, mpendidikan, mjurusan, company}
 
   }
 

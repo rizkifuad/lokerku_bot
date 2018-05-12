@@ -126,6 +126,22 @@ bot.on('callback_query', async (ctx) => {
     return
   }
 
+  if (answer.indexOf('call-') != -1) {
+     const idyn = answer.replace('call-', '')
+
+    const s = idyn.split('-')
+    console.log(s)
+
+    const id = s[0]
+    const yn = s[1] == 'yes' ? 1 : 2
+
+    await db.tb_apply.update({kehadiran: yn}, {where:{ recid:id}})
+
+    ctx.reply('Terimakasih atas konfirmasi anda')
+
+    return
+  }
+
   if (answer.indexOf('lokerdetail') != -1) {
      const id = answer.replace('lokerdetail', '')
     
@@ -202,7 +218,7 @@ bot.on('callback_query', async (ctx) => {
 
     case 'jurusan': 
       await db.tb_user.update({jurusan: answer, registration_phase: 'institusi'}, {where: {chat_id: chat.id}})
-      ctx.reply('Institusi?')
+      ctx.reply('Institusi Terakhir Anda?')
       break
 
     
@@ -297,7 +313,7 @@ bot.startPolling()
 
 /**
  *
- *Wes ngene ae clik, aku jaluk tulung. 
+ *Wes ngene ae clik, aku jaluk tulung
  Gaweo chatbot jenenge "lokerbot". 
  Pas awal join, keono ucapan selamat datang blablabla kyok bot musik wingi. 
  Terus bot bertanya sudah terdaftar atau belum. 
@@ -305,3 +321,88 @@ bot.startPolling()
  nama, alamat, email, pendidikan trakhir (opsi mulai SMA - S3), Jurusan (Opsi jurusan), skill, informasi tambahan
  8?
  */
+
+const express = require('express')
+var app = express()
+
+// respond with "hello world" when a GET request is made to the homepage
+app.get('/broadcast', async (req, res) => {
+  //const recid = req.query.recid
+  const recid = 2
+
+  const detail = await db.tb_lowongan.detail(recid)
+  const users = await db.tb_user.findAll({raw: true})
+
+  console.log(detail)
+
+  for (let u of users) {
+    console.log('broadcast', u)
+
+    if (detail.mpendidikan.indexOf(u.pendidikan+'') != -1 && detail.mjurusan.indexOf(u.jurusan+'') != -1) {
+      
+    
+    bot.telegram.sendMessage(u.chat_id, `
+  <strong>Info Lowongan Baru</strong>
+
+
+  <strong>${detail.company.nama}</strong>
+- ${detail.lowongan.keterangan}
+
+<strong>Pendidikan</strong>
+- ${detail.pendidikan.join('\n- ')}
+
+<strong>Jurusan</strong>
+- ${detail.jurusan.join('\n- ')}
+    `, {parse_mode: 'html'})
+
+  } else {
+    continue
+  }
+  }
+
+  res.send('broadcast success')
+})
+
+app.get('/call', async (req, res) => {
+
+  console.log('call')
+  //const recid = req.query.recid
+  let recid = '1,4'
+  recid = recid.split(',')
+
+  const appli = await db.tb_apply.findAll({where: {recid}, raw: true})
+
+
+  //const users = await db.tb_user.findAll({raw: true})
+
+
+  for (let p of appli) {
+    const user  = await db.tb_user.findOne({where:{recid: p.user}, raw: true})
+    const detail = await db.tb_lowongan.detail(p.lowongan)
+
+    var keyboard = {
+      "inline_keyboard": [
+        [
+          {"text": "Yes", "callback_data": "call-"+p.recid+"-yes"},
+          {"text": "No", "callback_data": "call-"+p.recid+"-no"}
+        ]
+      ]
+    };
+    
+    bot.telegram.sendMessage(user.chat_id, `
+  <strong>Panggilan Interview</strong>
+
+  <strong>${detail.company.nama}</strong>
+- ${detail.lowongan.keterangan}
+
+Mohon Konfirmasi kehadiran dibawah ini?
+
+    `, {parse_mode: 'html', reply_markup: JSON.stringify(keyboard)})
+  }
+
+
+  res.send('broadcast success')
+})
+
+
+app.listen(5555)
