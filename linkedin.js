@@ -6,7 +6,7 @@ const fs = require('fs')
 nightmare
   .goto('https://www.linkedin.com/')
   .type('input#login-email', 'rizkifuad@gmail.com')
-  .type('input#login-password', 'radiation65')
+  .type('input#login-password', 'penggodulan')
   .click('#login-submit')
   .wait(1000)
   .goto('https://www.linkedin.com/in/alham-wahyuanda-b689124a/')
