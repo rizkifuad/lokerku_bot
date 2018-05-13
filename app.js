@@ -327,8 +327,8 @@ var app = express()
 
 // respond with "hello world" when a GET request is made to the homepage
 app.get('/broadcast', async (req, res) => {
-  //const recid = req.query.recid
-  const recid = 2
+  const recid = req.query.recid
+  //const recid = 2
 
   const detail = await db.tb_lowongan.detail(recid)
   const users = await db.tb_user.findAll({raw: true})
@@ -366,8 +366,8 @@ app.get('/broadcast', async (req, res) => {
 app.get('/call', async (req, res) => {
 
   console.log('call')
-  //const recid = req.query.recid
-  let recid = '1,4'
+  const recid = req.query.recid
+  //let recid = '1,4'
   recid = recid.split(',')
 
   const appli = await db.tb_apply.findAll({where: {recid}, raw: true})
