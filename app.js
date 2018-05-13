@@ -123,6 +123,8 @@ bot.on('callback_query', async (ctx) => {
       kehadiran:0
     })
 
+    ctx.reply('Terimakasih sudah apply di lowongan ini')
+
     return
   }
 
