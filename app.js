@@ -162,6 +162,7 @@ bot.on('callback_query', async (ctx) => {
   
       return ctx.reply(`
   <strong>${company.nama}</strong>
+${info.posisi}
 - ${info.keterangan}
 
 <strong>Pendidikan</strong>
@@ -357,6 +358,7 @@ app.get('/broadcast', async (req, res) => {
 
 
   <strong>${detail.company.nama}</strong>
+${detail.lowongan.posisi}
 - ${detail.lowongan.keterangan}
 
 <strong>Pendidikan</strong>
@@ -404,6 +406,7 @@ app.get('/call', async (req, res) => {
   <strong>Panggilan Interview</strong>
 
   <strong>${detail.company.nama}</strong>
+ ${detail.lowongan.posisi}
 - ${detail.lowongan.keterangan}
 
 Mohon Konfirmasi kehadiran dibawah ini?
