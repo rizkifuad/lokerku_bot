@@ -339,6 +339,15 @@ app.get('/broadcast', async (req, res) => {
     console.log('broadcast', u)
 
     if (detail.mpendidikan.indexOf(u.pendidikan+'') != -1 && detail.mjurusan.indexOf(u.jurusan+'') != -1) {
+
+    var keyboard = {
+      "inline_keyboard": [
+        [
+          {"text": "Apply", "callback_data": "apply" + detail.lowongan.recid},
+          {"text": "Lainnya", "callback_data": "/loker"}
+        ]
+      ]
+    };
       
     
     bot.telegram.sendMessage(u.chat_id, `
@@ -353,7 +362,7 @@ app.get('/broadcast', async (req, res) => {
 
 <strong>Jurusan</strong>
 - ${detail.jurusan.join('\n- ')}
-    `, {parse_mode: 'html'})
+    `, {parse_mode: 'html', reply_markup: JSON.stringify(keyboard)})
 
   } else {
     continue

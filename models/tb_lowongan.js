@@ -74,7 +74,7 @@ module.exports = function(sequelize, DataTypes) {
       console.log(d.mpendidikan)
       console.log(d.mjurusan)
 
-      console.log(d.mpendidikan.indexOf(user.pendidikan+''))
+      //console.log(d.mpendidikan.indexOf(user.pendidikan+''))
 
       if (d.mpendidikan.indexOf(user.pendidikan+'') != -1 && d.mjurusan.indexOf(user.jurusan+'') != -1) {
         console.log('true')
