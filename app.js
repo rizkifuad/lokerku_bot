@@ -2,10 +2,52 @@ const dotenv = require('dotenv')
 const Telegraf = require('telegraf')
 const { Extra, Markup } = require('telegraf');
 const db = require('./models')
+const sequelize = require('sequelize')
 dotenv.load()
 
 const bot = new Telegraf(process.env.BOT_TOKEN)
 
+bot.command('/status', async (ctx) => {
+  const chat = ctx.update.message.from
+
+  const apply = await db.sequelize.query(`
+  SELECT * FROM tb_apply a
+  JOIN tb_user u on u.recid=a.user
+  JOIN tb_lowongan l on l.recid=a.lowongan
+  WHERE u.chat_id = ${chat.id}
+  `, { type: sequelize.QueryTypes.SELECT})
+
+  console.log('apply', apply)
+
+  let text = ''
+
+  for (const t of apply) {
+    let kehadiran = ''
+    if (t.kehadiran > 0) {
+      if (t.kehadiran == 1) {
+        kehadiran = ' - hadir'
+      } else {
+        kehadiran = ' - berhalangan hadir'
+      }
+    }
+
+    let status = ''
+    if (t.status) {
+      if (t.posisi) {
+        
+      }
+    }
+
+    text += `- ${t.posisi} `
+  }
+  
+  ctx.reply(`
+  *Status aplikasi*
+
+  `)
+
+
+})
 
 bot.command('/start', async (ctx) => {
   const chat = ctx.update.message.from
